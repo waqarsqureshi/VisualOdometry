@@ -89,8 +89,24 @@ gps_interp_x = np.interp(frame_times, np.linspace(0, len(gps_coords)/1, len(gps_
 gps_interp_z = np.interp(frame_times, np.linspace(0, len(gps_coords)/1, len(gps_coords)), gps_proj[:,0])
 
 # --- VO + Kalman Setup ---
-focal = 460.0
-pp = (293, 424)
+#focal = 460.0
+#pp = (293, 424)
+
+cap = cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    raise IOError("Error opening video file.")
+
+fps = cap.get(cv2.CAP_PROP_FPS)
+frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+logging.info(f"Detected video resolution: {frame_width} x {frame_height}")
+logging.info(f"Detected video FPS: {fps:.2f} frames per second.")
+
+# Automatically estimate focal length and principal point
+focal = frame_width * 0.9  # or 1.0
+pp = (frame_width / 2, frame_height / 2)
+
 
 feature_params = dict(maxCorners=1000, qualityLevel=0.3, minDistance=7, blockSize=7)
 lk_params = dict(winSize=(21, 21), maxLevel=3, criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01))
@@ -127,7 +143,7 @@ out = cv2.VideoWriter('./output/trajectory_animation.mp4', fourcc, int(fps), (16
 # --- Scale Estimation ---
 
 # How many frames to use for initial calibration
-scale_estimation_frames = 100
+scale_estimation_frames = 200
 
 vo_distances = []
 gps_distances = []
@@ -149,7 +165,13 @@ while frame_idx < scale_estimation_frames:
 	if not ret:
 		break
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	next_pts, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, gray, prev_pts, None, **lk_params)
+
+	# Safe optical flow
+	if prev_pts is not None and len(prev_pts) > 0:
+		next_pts, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, gray, prev_pts, None, **lk_params)
+	else:
+		prev_pts = cv2.goodFeaturesToTrack(prev_gray, mask=None, **feature_params)
+		next_pts, status, _ = None, None, None
 
 	if next_pts is not None and status is not None:
 		good_old = prev_pts[status.flatten() == 1]
@@ -195,7 +217,12 @@ while True:
 		break
 
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	next_pts, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, gray, prev_pts, None, **lk_params)
+	# Safe optical flow
+	if prev_pts is not None and len(prev_pts) > 0:
+		next_pts, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, gray, prev_pts, None, **lk_params)
+	else:
+		prev_pts = cv2.goodFeaturesToTrack(prev_gray, mask=None, **feature_params)
+		next_pts, status, _ = None, None, None
 
 	gps_correction_applied = False
 	gps_jump_meters = 0
@@ -279,7 +306,16 @@ while True:
 
 	text1 = f'FPS: {fps_live:.2f}'
 	text2 = f'VO X:{x[0,0]:.2f} Z:{x[1,0]:.2f}'
-	text3 = f'GPS X:{gps_interp_x[frame_idx-1]:.2f} Z:{gps_interp_z[frame_idx-1]:.2f}'
+	if (frame_idx - 1) >= len(gps_interp_x):
+		logging.warning(
+			f"Frame {frame_idx - 1} out of GPS interpolation bounds! Max valid index: {len(gps_interp_x) - 1}")
+		gps_x_val = np.nan
+		gps_z_val = np.nan
+	else:
+		gps_x_val = gps_interp_x[frame_idx - 1]
+		gps_z_val = gps_interp_z[frame_idx - 1]
+
+	text3 = f'GPS X:{gps_x_val:.2f} Z:{gps_z_val:.2f}'
 	text4 = f'GPS Jump: {gps_jump_meters:.2f}m'
 	text5 = 'GPS Correction: ' + ('APPLIED YES' if gps_correction_applied else 'SKIPPED NO')
 
@@ -349,4 +385,3 @@ logging.info(f"Max Error: {results_df['error_m'].max():.2f} meters")
 logging.info(f"Min Error: {results_df['error_m'].min():.2f} meters")
 
 logging.info("All outputs saved to './output/'. Done!")
-
