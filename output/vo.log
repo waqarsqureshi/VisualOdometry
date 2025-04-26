@@ -1,0 +1,124 @@
+2025-04-26 21:28:05,100 [INFO] Loading data from ./data directory...
+2025-04-26 21:28:05,115 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:28:05,115 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:28:05,115 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:28:05,115 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:28:05,115 [INFO] Data loaded successfully.
+2025-04-26 21:28:06,355 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:28:06,370 [INFO] Detected video resolution: 586 x 848
+2025-04-26 21:28:06,370 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:28:06,370 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:28:06,379 [INFO] GPS projection completed.
+2025-04-26 21:28:06,398 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:28:06,399 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:28:08,177 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:28:45,790 [INFO] Saving results...
+2025-04-26 21:28:55,145 [INFO] Average Error: 0.77 meters
+2025-04-26 21:28:55,145 [INFO] Max Error: 2.61 meters
+2025-04-26 21:28:55,146 [INFO] Min Error: 0.03 meters
+2025-04-26 21:28:55,146 [INFO] All outputs saved to './output/'. Done!
+2025-04-26 21:34:50,000 [INFO] Loading data from ./data directory...
+2025-04-26 21:34:50,015 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:34:50,016 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:34:50,016 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:34:50,016 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:34:50,016 [INFO] Data loaded successfully.
+2025-04-26 21:34:51,291 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:34:51,306 [INFO] Detected video resolution: 586 x 848
+2025-04-26 21:34:51,306 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:34:51,306 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:34:51,315 [INFO] GPS projection completed.
+2025-04-26 21:34:51,335 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:34:51,335 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:34:53,117 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:35:26,297 [INFO] Saving results...
+2025-04-26 21:35:33,128 [INFO] Average Error: 0.77 meters
+2025-04-26 21:35:33,128 [INFO] Max Error: 2.61 meters
+2025-04-26 21:35:33,128 [INFO] Min Error: 0.03 meters
+2025-04-26 21:35:33,129 [INFO] All outputs saved to './output/'. Done!
+2025-04-26 21:45:06,374 [INFO] Loading data from ./data directory...
+2025-04-26 21:45:06,390 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:45:06,390 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:45:06,390 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:45:06,390 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:45:06,390 [INFO] Data loaded successfully.
+2025-04-26 21:45:07,782 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:45:07,797 [INFO] Detected video resolution: 586 x 848
+2025-04-26 21:45:07,798 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:45:07,798 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:45:07,807 [INFO] GPS projection completed.
+2025-04-26 21:45:07,826 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:45:07,826 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:45:09,610 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:46:33,920 [INFO] Loading data from ./data directory...
+2025-04-26 21:46:33,938 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:46:33,938 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:46:33,938 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:46:33,938 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:46:33,938 [INFO] Data loaded successfully.
+2025-04-26 21:46:35,309 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:46:35,325 [INFO] Detected video resolution: 586 x 848
+2025-04-26 21:46:35,325 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:46:35,325 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:46:35,335 [INFO] GPS projection completed.
+2025-04-26 21:46:35,358 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:46:35,358 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:46:37,265 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:47:18,701 [INFO] Saving results...
+2025-04-26 21:47:39,086 [INFO] Average Error: 0.77 meters
+2025-04-26 21:47:39,086 [INFO] Max Error: 2.61 meters
+2025-04-26 21:47:39,087 [INFO] Min Error: 0.03 meters
+2025-04-26 21:47:39,087 [INFO] All outputs saved to './output/'. Done!
+2025-04-26 21:48:28,519 [INFO] Loading data from ./data directory...
+2025-04-26 21:48:28,534 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:48:28,534 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:48:28,534 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:48:28,534 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:48:28,534 [INFO] Data loaded successfully.
+2025-04-26 21:48:29,804 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:48:29,820 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:48:29,829 [INFO] GPS projection completed.
+2025-04-26 21:48:29,848 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:48:29,849 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:48:30,748 [INFO] Estimated scale from first 100 frames: 0.000
+2025-04-26 21:49:15,098 [INFO] Saving results...
+2025-04-26 21:49:21,357 [INFO] Average Error: 0.76 meters
+2025-04-26 21:49:21,357 [INFO] Max Error: 2.76 meters
+2025-04-26 21:49:21,357 [INFO] Min Error: 0.00 meters
+2025-04-26 21:49:21,357 [INFO] All outputs saved to './output/'. Done!
+2025-04-26 21:54:23,397 [INFO] Loading data from ./data directory...
+2025-04-26 21:54:23,414 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:54:23,414 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:54:23,414 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:54:23,414 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:54:23,414 [INFO] Data loaded successfully.
+2025-04-26 21:54:24,862 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:54:24,879 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:54:24,890 [INFO] GPS projection completed.
+2025-04-26 21:54:24,914 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:54:24,924 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:54:27,144 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:55:17,281 [INFO] Saving results...
+2025-04-26 21:55:21,996 [INFO] Average Error: 0.78 meters
+2025-04-26 21:55:21,996 [INFO] Max Error: 8.06 meters
+2025-04-26 21:55:21,996 [INFO] Min Error: 0.02 meters
+2025-04-26 21:55:21,996 [INFO] All outputs saved to './output/'. Done!
+2025-04-26 21:57:15,061 [INFO] Loading data from ./data directory...
+2025-04-26 21:57:15,076 [INFO] Loaded GPS file: GPS_20250216_163034_data.csv
+2025-04-26 21:57:15,076 [INFO] Loaded Accelerometer file: ACL_20250216_163034_data.csv
+2025-04-26 21:57:15,076 [INFO] Loaded Magnetometer file: MAG_20250216_163034_data.csv
+2025-04-26 21:57:15,076 [INFO] Loaded Video file: vo.mp4
+2025-04-26 21:57:15,076 [INFO] Data loaded successfully.
+2025-04-26 21:57:16,311 [INFO] Accelerometer low-pass filtering completed.
+2025-04-26 21:57:16,326 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:57:16,335 [INFO] GPS projection completed.
+2025-04-26 21:57:16,350 [INFO] Detected video resolution: 586 x 848
+2025-04-26 21:57:16,350 [INFO] Detected video FPS: 30.01 frames per second.
+2025-04-26 21:57:16,365 [INFO] Starting real-time Visual Odometry + Accelerometer + GPS fusion...
+2025-04-26 21:57:16,371 [INFO] Estimating scale automatically from first 100 frames...
+2025-04-26 21:57:18,088 [INFO] Estimated scale from first 200 frames: 0.067
+2025-04-26 21:58:05,209 [INFO] Saving results...
+2025-04-26 21:58:09,953 [INFO] Average Error: 0.78 meters
+2025-04-26 21:58:09,954 [INFO] Max Error: 8.07 meters
+2025-04-26 21:58:09,954 [INFO] Min Error: 0.03 meters
+2025-04-26 21:58:09,954 [INFO] All outputs saved to './output/'. Done!
