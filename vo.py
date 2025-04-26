@@ -23,7 +23,7 @@ acl_df = acl_df.rename(columns={
 })
 
 # Apply Low-Pass Filter to Accelerometer
-alpha = 0.1  # smoothing factor
+alpha = 0.3  # smoothing factor
 filtered_acl = acl_df[['ax', 'ay', 'az']].copy()
 
 for axis in ['ax', 'ay', 'az']:
@@ -39,7 +39,7 @@ cap = cv2.VideoCapture(video_path)
 if not cap.isOpened():
     raise IOError("Error opening video file.")
 
-fps = 30 #cap.get(cv2.CAP_PROP_FPS)
+fps = cap.get(cv2.CAP_PROP_FPS)
 print(f"Detected video FPS: {fps:.2f} frames per second.")
 
 # --- Project GPS ---
@@ -75,8 +75,8 @@ F = np.array([[1, 0, dt, 0],
               [0, 0, 0, 1]])
 H = np.array([[1, 0, 0, 0],
               [0, 1, 0, 0]])
-Q = np.eye(4) * 0.01
-R_kalman = np.eye(2) * 5
+Q = np.eye(4) * 0.1
+R_kalman = np.eye(2) * 3
 P = np.eye(4)
 x = np.zeros((4,1))
 
@@ -93,6 +93,74 @@ trajectory = []
 results = []
 frame_idx = 0
 last_time = time.time()
+
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+out = cv2.VideoWriter('./output/trajectory_animation.mp4', fourcc, int(fps), (1600, 800))  # 1600x800 because combined frame
+
+# --- Scale Estimation ---
+
+# How many frames to use for initial calibration
+scale_estimation_frames = 100
+
+vo_distances = []
+gps_distances = []
+
+print("Estimating scale automatically from first 100 frames...")
+
+# Reset video to start
+cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+ret, prev_frame = cap.read()
+prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+prev_pts = cv2.goodFeaturesToTrack(prev_gray, mask=None, **feature_params)
+
+frame_idx = 0
+total_vo_distance = 0
+total_gps_distance = 0
+
+while frame_idx < scale_estimation_frames:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    next_pts, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, gray, prev_pts, None, **lk_params)
+
+    if next_pts is not None and status is not None:
+        good_old = prev_pts[status.flatten() == 1]
+        good_new = next_pts[status.flatten() == 1]
+
+        if len(good_old) > 7:
+            E, mask = cv2.findEssentialMat(good_new, good_old, focal=focal, pp=pp, method=cv2.RANSAC, prob=0.999, threshold=1.0)
+            if E is not None:
+                _, R_pose, t, mask_pose = cv2.recoverPose(E, good_new, good_old, focal=focal, pp=pp)
+
+                dx = t[0][0]
+                dz = t[2][0]
+                dist = np.sqrt(dx**2 + dz**2)
+                vo_distances.append(dist)
+
+                if frame_idx < len(gps_interp_x) - 1:
+                    gps_dx = gps_interp_x[frame_idx+1] - gps_interp_x[frame_idx]
+                    gps_dz = gps_interp_z[frame_idx+1] - gps_interp_z[frame_idx]
+                    gps_dist = np.sqrt(gps_dx**2 + gps_dz**2)
+                    gps_distances.append(gps_dist)
+
+    prev_gray = gray.copy()
+    prev_pts = cv2.goodFeaturesToTrack(prev_gray, mask=None, **feature_params)
+    frame_idx += 1
+
+# Calculate total distances
+total_vo_distance = np.sum(vo_distances)
+total_gps_distance = np.sum(gps_distances)
+
+# Compute estimated scale
+if total_vo_distance > 0:
+    estimated_scale = total_gps_distance / total_vo_distance
+else:
+    estimated_scale = 1.0  # fallback
+
+print(f"Estimated scale from first {scale_estimation_frames} frames: {estimated_scale:.3f}")
+
+
 
 while True:
     ret, frame = cap.read()
@@ -122,8 +190,9 @@ while True:
                 P = F @ P @ F.T + Q
 
                 # VO motion update
-                x[0,0] += dx * 1.5
-                x[1,0] += dz * 1.5
+                x[0,0] += dx * estimated_scale
+                x[1,0] += dz * estimated_scale
+
 
                 # Accelerometer motion update
                 if frame_idx < len(filtered_acl):
@@ -196,7 +265,7 @@ while True:
     combined = np.hstack((cv2.resize(frame, (800, 800)), traj_img))
 
     cv2.imshow("Visual Odometry + GPS + Accelerometer Realtime", combined)
-
+    out.write(combined)
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
     	print("Simulation interrupted by user.")
@@ -217,7 +286,7 @@ while True:
 		        	cv2.destroyAllWindows()
 		        	exit()
 
-
+out.release()
 # --- Save Results ---
 print("Saving results...")
 
@@ -253,4 +322,3 @@ print(f"Max Error: {results_df['error_m'].max():.2f} meters")
 print(f"Min Error: {results_df['error_m'].min():.2f} meters")
 
 print("All outputs saved to './output/'. Done!")
-
