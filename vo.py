@@ -26,18 +26,18 @@ logging.info("Loading data from ./data directory...")
 # Automatically find the correct files
 gps_file = glob.glob('./data/GPS_*.csv')[0]
 acl_file = glob.glob('./data/ACL_*.csv')[0]
-mag_file = glob.glob('./data/MAG_*.csv')[0]
+#mag_file = glob.glob('./data/MAG_*.csv')[0]
 video_file = glob.glob('./data/*.mp4')[0]
 
 # Load data
 gps_df = pd.read_csv(gps_file)
 acl_df = pd.read_csv(acl_file)
-mag_df = pd.read_csv(mag_file)
+#mag_df = pd.read_csv(mag_file)
 video_path = video_file
 
 logging.info(f"Loaded GPS file: {os.path.basename(gps_file)}")
 logging.info(f"Loaded Accelerometer file: {os.path.basename(acl_file)}")
-logging.info(f"Loaded Magnetometer file: {os.path.basename(mag_file)}")
+#logging.info(f"Loaded Magnetometer file: {os.path.basename(mag_file)}")
 logging.info(f"Loaded Video file: {os.path.basename(video_file)}")
 
 logging.info("Data loaded successfully.")
@@ -67,26 +67,41 @@ if not cap.isOpened():
 	raise IOError("Error opening video file.")
 
 fps = cap.get(cv2.CAP_PROP_FPS)
+
 logging.info(f"Detected video FPS: {fps:.2f} frames per second.")
 
-# --- Project GPS ---
+# GPS Projection
 gps_coords = gps_df[['GPS (Lat.) [deg]', 'GPS (Long.) [deg]']].values
+
 gps_origin = gps_coords[0]
 gps_proj = np.zeros_like(gps_coords)
 
 for i in range(len(gps_coords)):
-	gps_proj[i, 0] = geodesic((gps_origin[0], gps_origin[1]), (gps_coords[i, 0], gps_origin[1])).meters
-	gps_proj[i, 1] = geodesic((gps_origin[0], gps_origin[1]), (gps_origin[0], gps_coords[i, 1])).meters
-	if gps_coords[i,1] < gps_origin[1]:
-		gps_proj[i,1] *= -1
-	if gps_coords[i,0] < gps_origin[0]:
-		gps_proj[i,0] *= -1
+    gps_proj[i, 0] = geodesic((gps_origin[0], gps_origin[1]), (gps_coords[i, 0], gps_origin[1])).meters
+    gps_proj[i, 1] = geodesic((gps_origin[0], gps_origin[1]), (gps_origin[0], gps_coords[i, 1])).meters
+    if gps_coords[i,1] < gps_origin[1]:
+        gps_proj[i,1] *= -1
+    if gps_coords[i,0] < gps_origin[0]:
+        gps_proj[i,0] *= -1
 
 logging.info("GPS projection completed.")
 
-frame_times = np.arange(0, len(gps_coords) * 1.0, 1/fps)
-gps_interp_x = np.interp(frame_times, np.linspace(0, len(gps_coords)/1, len(gps_coords)), gps_proj[:,1])
-gps_interp_z = np.interp(frame_times, np.linspace(0, len(gps_coords)/1, len(gps_coords)), gps_proj[:,0])
+# --- Handle timestamps ---
+gps_times_seconds = gps_df['Sample time [seg]'].values
+
+if gps_times_seconds[0] > 10000:
+    gps_times_seconds = gps_times_seconds - gps_times_seconds[0]
+    logging.info("Detected Mobile GPS timestamps, normalized.")
+else:
+    logging.info("Detected GoPro GPS timestamps, already relative.")
+
+# Frame timestamps
+video_duration_seconds = cap.get(cv2.CAP_PROP_FRAME_COUNT) / fps
+frame_times = np.linspace(0, video_duration_seconds, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+
+# Interpolate GPS
+gps_interp_x = np.interp(frame_times, gps_times_seconds, gps_proj[:,1])
+gps_interp_z = np.interp(frame_times, gps_times_seconds, gps_proj[:,0])
 
 # --- VO + Kalman Setup ---
 #focal = 460.0
@@ -278,7 +293,15 @@ while True:
 							gps_correction_applied = True
 
 				trajectory.append((x[0,0], x[1,0]))
-				results.append([frame_idx, x[0,0], x[1,0], gps_interp_x[frame_idx], gps_interp_z[frame_idx]])
+				if frame_idx < len(gps_interp_x):
+					gps_x_val = gps_interp_x[frame_idx]
+					gps_z_val = gps_interp_z[frame_idx]
+				else:
+					gps_x_val = np.nan
+					gps_z_val = np.nan
+					logging.warning(f"Frame {frame_idx}: No GPS data available, filling with NaN.")
+
+				results.append([frame_idx, x[0, 0], x[1, 0], gps_x_val, gps_z_val])
 
 	prev_gray = gray.copy()
 	prev_pts = cv2.goodFeaturesToTrack(prev_gray, mask=None, **feature_params)
